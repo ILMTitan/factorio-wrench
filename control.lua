@@ -80,6 +80,10 @@ script.on_event(defines.events.on_built_entity, function(event)
     player.cursor_stack.set_stack({name = "wrench", count = 1})
     created_entity.destroy()
     entities = surface.find_entities{{ pos.x, pos.y }, { pos.x, pos.y }}
+    if #entities > 1 then
+      print('Error: more than one entity found here...')
+      return
+    end
 
     if player.gui.center.wrench then
       player.gui.center.wrench.destroy()
@@ -87,15 +91,14 @@ script.on_event(defines.events.on_built_entity, function(event)
 
     local entity
     if #entities == 1 then
-       Entities.set_current(entities[1])
+      entity = entities[1]
     else
-       Entities.set_current(nil)
+      entity = nil
     end
-    
-    for _, entity in pairs(entities) do 
-       if (entity) then
-	  game.raise_event(EntityClickEvent, { entity = entity, player = player })
-       end
+
+    Entities.set_current(entity)
+    if (entity) then
+      game.raise_event(EntityClickEvent, { entity = entity, player = player })
     end
   end
 end)
